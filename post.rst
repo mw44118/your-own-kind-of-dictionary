@@ -1,7 +1,3 @@
-+++++++++++++++++++++++++++++++++++++++
-My python dictionary subclass adventure
-+++++++++++++++++++++++++++++++++++++++
-
 I'm working on a task-management project.  I want to store tasks in
 object thats that are essentially dictionaries, except with a few extra
 features, constraints, and methods added on.
@@ -71,7 +67,6 @@ regular dictionary; e.g.::
         >>> import collections
         >>> isinstance(t, collections.Mapping)
         True
-
 
 
 A few tests
