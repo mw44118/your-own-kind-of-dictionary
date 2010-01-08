@@ -7,7 +7,6 @@ import task
 
 class TestTask(unittest.TestCase):
 
-
     def tearDown(self):
         del(self.t)
 

@@ -1,18 +1,14 @@
 # vim: set expandtab ts=4 sw=4 filetype=python:
 
 """
-I want a regular dictionary, but with two small changes:
+I want a regular dictionary, but with some changes:
 
 1.  I want to tweak __str__.
-2.  I want restrict allowed values for some keys.
+2.  I want to restrict allowed values for some keys.
+3.  I want to restrict allowed types for some keys.
+4.  I want the object to be an instance of collections.MutableMapping.
 
 This file tracks my effort to get those two simple tasks done.
-
-First I subclass the dict class.
-
-Then I use the UserDict.UserDict class.
-
-Finally, I use the UserDict.DictMixin, which works out fine.
 """
 
 import collections, UserDict
