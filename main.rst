@@ -2,6 +2,8 @@
 Your own kind of dictionary
 +++++++++++++++++++++++++++
 
+.. contents::
+
 What I want
 ===========
 
@@ -16,12 +18,9 @@ solution that I'm happy with.
 Why I want a dictionary
 =======================
 
-Don't get me wrong -- I love relational databases.  But I wanted to
-explore what happens when a system doesn't start with a type-based
-schema at the core.
-
-Instead, I wanted to build a system where the schema is trivial to bend
-to fit the project at hand.
+Don't get me wrong -- I love relational databases.  But I'm tired of
+them.  And I wanted to explore what happens when a system has a
+schema-free database at the core.
 
 Here's how I use this system to keep track of the myriad home
 improvement tasks I've got in mind::
@@ -133,7 +132,7 @@ What do I need my object to do
         TypeError...
 
 
-4.  Finally, I want to take advantage of pep 3119 and make it easy for
+4.  Finally, I want to take advantage of `pep 3119`_ and make it easy for
     other people to test if my object is an instance of
     collections.Mapping::
 
@@ -141,13 +140,16 @@ What do I need my object to do
         >>> isinstance(t, collections.Mapping)
         True
 
+.. _`pep 3119`: http://www.python.org/dev/peps/pep-3119/
+
+
 I'll get into what I like about PEP3119 way later.
 
 
 Possible ways to build it
 =========================
 
-Here's a short list of ideas I came up with::
+Here's a short list of ideas I came up with:
 
 1.  Subclass the builtin dict class.
 
@@ -162,12 +164,108 @@ Here's a short list of ideas I came up with::
 I'll use tests to, err, test the different ways to build it
 ===========================================================
 
-Write a really simple test
+I'll follow a pattern throughout this article that looks roughly like
+this:
 
-Run the test
+1.  I'll write some code to verify the object (sometimes people call
+    this the system under test, or SUT) does what I want it to do.  You
+    can think of the test code as sort of like a specification.
+
+2.  I'll run the test and verify I get a failure.  It's important to
+    keep track of the difference between failures and errors in test
+    code.  I want a failure, not an error.  A failure shows a problem in
+    the SUT.  An error means somehow the test crashed.  The test might
+    have crashed because of an issue in the SUT, or, it might have
+    crashed because of a glitch in the
+
+3.  I'll write code on the SUT with the goal in mind of getting the test
+    to pass.
+
+4.  I'll rerun the test and see if
+
+Sometimes, in step one, I'll write a single really trivial function.
+Other times, I'll write out several variations on the same idea.
+
+Now, at this point, I'll just make it clear to anyone that cares that
+I'm not going to be strict about writing just one tiny test and then
+just enough code to satisfy this test.  For example, I'll never write a
+test that just verifies I can import a module, or just verifies I can
+instantiate my subclass.
+
+Instead, I'll write tests for real-life functions, and I'll write
+several tests at once.  I've tried other styles, and this one works for
+me.
+
+
+Writing the first test
+======================
+
+I want to alter my own dictionary-like object so that when it is
+converted to a string, it looks different.  This is easy to write a test
+for.  The code in `listing1.py`_ shows how.
+
+.. _`listing1.py`: listing1.py
+
+The last two lines mean that when I run the file as a script, unittest
+will run the tests, like this::
+
+    $ python listing1.py
+    EE
+    ======================================================================
+    ERROR: test_1 (__main__.TestAsString)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "listing1.py", line 12, in test_1
+        td = Task()
+    NameError: global name 'Task' is not defined
+
+    ======================================================================
+    ERROR: test_2 (__main__.TestAsString)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "listing1.py", line 25, in test_2
+        td = Task(title='Waterproof basement',
+    NameError: global name 'Task' is not defined
+
+    ----------------------------------------------------------------------
+    Ran 2 tests in 0.000s
+
+    FAILED (errors=2)
+
+
+Notice the **EE** at the beginning.  Both tests hit an error because they
+tried to use a class that wasn't defined.   If you pull the comments off the
+code near the bottom of the file, instead of errors, you'll get failures, like
+this::
+
+    $ python listing1.py # This time after uncommenting...
+    FF
+    ======================================================================
+    FAIL: test_1 (__main__.TestAsString)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "listing1.py", line 16, in test_1
+        """Expected 'Empty task', got %s!""" % s
+    AssertionError: Expected 'Empty task', got <__main__.Task object at 0xb76fcf2c>!
+
+    ======================================================================
+    FAIL: test_2 (__main__.TestAsString)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "listing1.py", line 41, in test_2
+        "Got %s, expected something different!" % s
+    AssertionError: Got <__main__.Task object at 0xb76fcf2c>, expected something different!
+
+    ----------------------------------------------------------------------
+    Ran 2 tests in 0.000s
+
+    FAILED (failures=2)
+
 
 Subclass dict
 =============
+
+The f
 
 Run test on the dict subclass
 =============================
