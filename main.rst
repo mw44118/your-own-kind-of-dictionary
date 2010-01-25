@@ -261,7 +261,6 @@ this::
 
     FAILED (failures=2)
 
-
 Subclass dict
 =============
 
