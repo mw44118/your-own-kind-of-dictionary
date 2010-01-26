@@ -264,7 +264,7 @@ this::
 Subclass dict
 =============
 
-The f
+
 
 Run test on the dict subclass
 =============================

@@ -19,7 +19,7 @@ class TestAsString(unittest.TestCase):
     def test_2(self):
 
         """
-        Convert an empty TaskDict to a string.
+        Convert a Task with stuff inside it into a string.
         """
 
         td = Task(title='Waterproof basement',
@@ -43,9 +43,9 @@ expected_cost_range            : [3000, 8000]
 
 # Uncomment the next lines to see the difference between errors and
 # failures.
-class Task(object):
-    def __init__(self, *args, **kwargs):
-        pass
+# class Task(object):
+#     def __init__(self, *args, **kwargs):
+#         pass
 
 
 if __name__ == '__main__':
