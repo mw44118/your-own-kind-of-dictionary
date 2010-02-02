@@ -86,8 +86,7 @@ class TestRestrictToTypes(unittest.TestCase):
     def test_3(self):
 
         """
-        Make sure that methods that implicitly set keys on the
-        dictionary still use our customized __setitem__ method.
+        Verify __init__ uses our __setitem__ method.
         """
 
         self.Task.allowed_types = {
@@ -96,6 +95,23 @@ class TestRestrictToTypes(unittest.TestCase):
 
         def set_an_invalid_temperature():
             t = self.Task(temperature='pink')
+
+        self.assertRaises(ValueError, set_an_invalid_temperature)
+
+
+    def test_4(self):
+
+        """
+        Verify update uses our __setitem__ method.
+        """
+
+        self.Task.allowed_types = {
+            'temperature':int,
+        }
+
+        def set_an_invalid_temperature():
+            t = self.Task()
+            t.update({'temperature':'pink'})
 
         self.assertRaises(ValueError, set_an_invalid_temperature)
 
