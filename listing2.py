@@ -83,7 +83,7 @@ class TestRestrictToTypes(unittest.TestCase):
         self.assertRaises(ValueError, set_an_invalid_temperature)
 
 
-    def test_3(self):
+    def test_init(self):
 
         """
         Verify __init__ uses our __setitem__ method.
@@ -99,7 +99,7 @@ class TestRestrictToTypes(unittest.TestCase):
         self.assertRaises(ValueError, set_an_invalid_temperature)
 
 
-    def test_4(self):
+    def test_update(self):
 
         """
         Verify update uses our __setitem__ method.

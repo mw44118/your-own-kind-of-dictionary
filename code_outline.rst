@@ -73,13 +73,16 @@ listing4.py
     method.  This test should raise an ERROR since UserDict.UserDict is
     not a new-style class.
 
+listing5.py
+===========
+
 4.  Now write a class inherits from both UserDict.DictMixin and the
     object class.  This class should pass all the tests written so far.
 
 5.  Write a test that checks if our class is a subclass of
     the MutableMapping class.
 
-listing5.py
+listing6.py
 ===========
 
 1.  Somehow import or copy all the tests from listing4.py.
