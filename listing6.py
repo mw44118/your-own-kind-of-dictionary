@@ -1,10 +1,36 @@
 # vim: set expandtab ts=4 sw=4 filetype=python:
 
-import collections, unittest, UserDict
+import collections, unittest
 
-import listing4
+import listing5
 
-class Task(UserDict.DictMixin):
+
+class TestAsString(listing5.TestAsString):
+
+    def setUp(self):
+        self.Task = Task
+
+class TestRestrictToSets(listing5.TestRestrictToSets):
+
+    def setUp(self):
+        self.Task = Task
+
+class TestRestrictToTypes(listing5.TestRestrictToTypes):
+
+    def setUp(self):
+        self.Task = Task
+
+class TestDictUtilityMethods(listing5.TestDictUtilityMethods):
+
+    def setUp(self):
+        self.Task = Task
+
+class Testpep3119(listing5.TestPEP3119):
+
+    def setUp(self):
+        self.Task = Task
+
+class Task(collections.MutableMapping):
 
     def __init__(self, d=None, **kwargs):
         self._d = {}
@@ -49,6 +75,12 @@ class Task(UserDict.DictMixin):
     def copy(self):
         return Task(self._d.copy())
 
+    def __iter__(self):
+        return iter(self._d)
+
+    def __len__(self):
+        return len(self._d)
+
     def __str__(self):
 
         if not self._d:
@@ -70,39 +102,6 @@ class Task(UserDict.DictMixin):
                     if k != 'title']
                 + [""]
                 )
-
-class TestAsString(listing4.TestAsString):
-
-    def setUp(self):
-        self.Task = Task
-
-class TestRestrictToSets(listing4.TestRestrictToSets):
-
-    def setUp(self):
-        self.Task = Task
-
-class TestRestrictToTypes(listing4.TestRestrictToTypes):
-
-    def setUp(self):
-        self.Task = Task
-
-class TestDictUtilityMethods(listing4.TestDictUtilityMethods):
-
-    def setUp(self):
-        self.Task = Task
-
-
-class TestPEP3119(unittest.TestCase):
-
-    def setUp(self):
-        self.Task = Task
-
-    def test_1(self):
-
-        t = self.Task()
-
-        assert isinstance(t, collections.MutableMapping), \
-        't is an instance of %s!' % type(t)
 
 if __name__ == '__main__':
     unittest.main()

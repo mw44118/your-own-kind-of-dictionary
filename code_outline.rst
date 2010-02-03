@@ -61,6 +61,7 @@ listing3.py
 
 4.  Write a new Task class that implements these methods.
 
+
 listing4.py
 ===========
 
@@ -73,14 +74,18 @@ listing4.py
     method.  This test should raise an ERROR since UserDict.UserDict is
     not a new-style class.
 
+
 listing5.py
 ===========
 
-4.  Now write a class inherits from both UserDict.DictMixin and the
+1.  Somehow import or copy all the tests from listing4.py.
+
+2.  Now write a class inherits from both UserDict.DictMixin and the
     object class.  This class should pass all the tests written so far.
 
-5.  Write a test that checks if our class is a subclass of
-    the MutableMapping class.
+3.  Write a test that checks if our class is a subclass of
+    the MutableMapping class, which it ain't, so this test should fail.
+
 
 listing6.py
 ===========
@@ -89,12 +94,3 @@ listing6.py
 
 2.  Rewrite the Task class to inherit from UserDict.DictMixin and
     collections.MutableMapping, so that the last test passes.
-
-
-
-
-
-
-
-
-
