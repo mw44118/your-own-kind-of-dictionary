@@ -4,7 +4,7 @@ import unittest
 
 import listing1
 
-class TestAsString(listing1.TestAsString1):
+class TestRestrictedValueTaskAsString(listing1.TestTaskAsString):
 
     def setUp(self):
         self.Task = Task
@@ -13,9 +13,9 @@ class TestAsString(listing1.TestAsString1):
 class TestRestrictToSets(unittest.TestCase):
 
     def setUp(self):
-        self.Task = Task
+        self.Task = RestrictedValueTask
 
-    def test_1(self):
+    def test_good_value(self):
         """
         Verify we can set a key to an allowed value.
         """
@@ -29,7 +29,7 @@ class TestRestrictToSets(unittest.TestCase):
         assert t['favorite color'] == 'red'
 
 
-    def test_2(self):
+    def test_bad_value(self):
         """
         Verify that assigning to a value not in the set raises a
         ValueError.
@@ -49,7 +49,7 @@ class TestRestrictToSets(unittest.TestCase):
 class TestRestrictToTypes(unittest.TestCase):
 
     def setUp(self):
-        self.Task = Task
+        self.Task = RestrictedValueTask
 
     def test_1(self):
         """
@@ -116,10 +116,10 @@ class TestRestrictToTypes(unittest.TestCase):
         self.assertRaises(ValueError, set_an_invalid_temperature)
 
 
-class Task(listing1.RefactoredTask):
+class RestrictedValueTask(listing1.RefactoredTask):
 
     """
-    Has the code to restrict keys to members of sets or instances of
+    Has the code to restrict values to members of sets or instances of
     types.
     """
 

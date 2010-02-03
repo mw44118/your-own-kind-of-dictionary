@@ -2,12 +2,12 @@
 
 import unittest
 
-class TestAsString1(unittest.TestCase):
+class TestTaskAsString(unittest.TestCase):
     """
     This one is going to raise ERRORs.
     """
 
-    def test_1(self):
+    def test_as_str_when_empty(self):
         """
         Convert an empty TaskDict to a string.
         """
@@ -19,7 +19,7 @@ class TestAsString1(unittest.TestCase):
         """Expected 'Empty task', got %s!""" % s
 
 
-    def test_2(self):
+    def test_as_str_with_data(self):
 
         """
         Convert a Task with stuff inside it into a string.
@@ -44,7 +44,21 @@ expected_cost_range            : [3000, 8000]
         "Got %s, expected something different!" % s
 
 
-class Task(dict):
+
+class BogusTask(object):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class TestBogusTaskAsString(TestTaskAsString):
+    """
+    This one should fail, but not raise an error.
+    """
+
+    def setUp(self):
+        self.Task = BogusTask
+
+class UglyTask(dict):
     """
     Just like a dictionary, but with modified __str__ and __setitem__
     methods.
@@ -72,41 +86,18 @@ class Task(dict):
                 )
 
 
-class BogusTask(object):
-    def __init__(self, *args, **kwargs):
-        pass
-
-
-class TestAsString2(TestAsString1):
-    """
-    This one should fail, but not raise an error.
-    """
-
-    def setUp(self):
-        self.Task = BogusTask
-
-
-class TestAsString3(TestAsString1):
+class TestUglyTaskAsString(TestTaskAsString):
 
     """
     This one should pass.
     """
 
     def setUp(self):
-        self.Task = Task
+        self.Task = UglyTask
 
 
-class TestAsString4(TestAsString1):
-    """
-    This one should pass, and it verifies that when I rewrote the Task
-    class __str__ method, I didn't break anything.
-    """
 
-    def setUp(self):
-        self.Task = RefactoredTask
-
-
-class RefactoredTask(Task):
+class RefactoredTask(UglyTask):
 
     newline = '\n'
     do_not_display_these_attributes = ['title']
@@ -180,6 +171,16 @@ class RefactoredTask(Task):
                 self.display_title,
                 self.newline,
                 self.display_attributes])
+
+
+class TestRefactoredTaskAsString(TestTaskAsString):
+    """
+    This one should pass, and it verifies that when I rewrote the Task
+    class __str__ method, I didn't break anything.
+    """
+
+    def setUp(self):
+        self.Task = RefactoredTask
 
 
 if __name__ == '__main__':
