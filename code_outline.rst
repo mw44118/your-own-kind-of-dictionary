@@ -85,7 +85,7 @@ listing5.py
 listing6.py
 ===========
 
-1.  Somehow import or copy all the tests from listing4.py.
+1.  Somehow import or copy all the tests from listing5.py.
 
 2.  Rewrite the Task class to inherit from UserDict.DictMixin and
     collections.MutableMapping, so that the last test passes.

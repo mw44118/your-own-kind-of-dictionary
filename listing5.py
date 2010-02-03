@@ -70,6 +70,7 @@ class Task(UserDict.DictMixin):
                     if k != 'title']
                 + [""]
                 )
+
 class TestAsString(listing4.TestAsString):
 
     def setUp(self):
@@ -89,6 +90,19 @@ class TestDictUtilityMethods(listing4.TestDictUtilityMethods):
 
     def setUp(self):
         self.Task = Task
+
+
+class TestIsInstance(unittest.TestCase):
+
+    def setUp(self):
+        self.Task = Task
+
+    def test_1(self):
+
+        t = self.Task()
+
+        assert isinstance(t, dict), \
+        't is an instance of %s, not dict!' % type(t)
 
 if __name__ == '__main__':
     unittest.main()
