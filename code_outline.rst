@@ -16,7 +16,7 @@ listing1.py
 
 4.  Write a test that uses our Task class.  All the tests in should
     pass.
-    
+
 5.  Write second version of the Task class with a less-insane __str__
     method.
 
@@ -59,9 +59,7 @@ listing3.py
     the nice methods like .keys(), .values(), .items(), .iteritems(),
     etc.
 
-4.  Write a new Task class that implements a few of these methods, but
-    not all of them.
-
+4.  Write a new Task class that implements these methods.
 
 listing4.py
 ===========

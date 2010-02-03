@@ -24,6 +24,53 @@ class TestRestrictToTypes(listing2.TestRestrictToTypes):
         self.Task = Task
 
 
+class TestDictUtilityMethods(unittest.TestCase):
+
+    """
+    Test a bunch of methods that people expect to use on dictionaries.
+    """
+
+    def setUp(self):
+        self.Task = Task
+
+    def test_keys(self):
+
+        t = self.Task(title='wash dishes', importance='not very')
+        assert sorted(t.keys()) == ['importance', 'title']
+
+    def test_values(self):
+
+        t = self.Task(title='wash dishes', importance='not very')
+        assert sorted(t.values()) == ['not very', 'wash dishes']
+
+    def test_items(self):
+
+        t = self.Task(title='wash dishes', importance='not very')
+
+        assert sorted(t.items()) == [
+            ('importance', 'not very'), ('title', 'wash dishes')], \
+        'Got %s! expected something else.' % sorted(t.items())
+
+    def test_pop(self):
+        t = self.Task(title='wash dishes', importance='not very')
+        t.pop('importance')
+        assert 'importance' not in t.keys()
+
+    def test_contains(self):
+        t = self.Task(title='wash dishes', importance='not very')
+        assert 'title' in t
+
+    def test_copy(self):
+        t = self.Task(title='wash dishes', importance='not very')
+        copy_of_t = t.copy()
+
+        for k, v in t.items():
+            assert t[k] is copy_of_t[k]
+
+    def test_iterate_through_keys(self):
+        t = self.Task(title='wash dishes', importance='not very')
+        assert sorted(list(t)) == ['importance', 'title']
+
 class Task(object):
 
     def __init__(self, d=None, **kwargs):
@@ -31,10 +78,13 @@ class Task(object):
         self._d = dict()
 
         if isinstance(d, dict):
-            self._d.update(d)
+
+            for k, v in d.items():
+                self.__setitem__(k, v)
 
         if kwargs:
-            self._d.update(kwargs)
+            for k, v in kwargs.items():
+                self.__setitem__(k, v)
 
     def __getitem__(self, k):
         return self._d[k]
@@ -59,8 +109,16 @@ class Task(object):
 
         self._d[k] = v
 
+
     def update(self, d, **kwargs):
-        self._d.update(d, **kwargs)
+
+        if hasattr(d, 'keys'):
+
+            for k in d.keys():
+                self.__setitem__(k, d[k])
+
+        for k, v in kwargs.items():
+                self.__setitem__(k, d[k])
 
 
     def __str__(self):
@@ -84,6 +142,23 @@ class Task(object):
                     if k != 'title']
                 + [""]
                 )
+
+
+    def keys(self):
+        return self._d.keys()
+
+    def values(self):
+        return self._d.values()
+
+    def __getattr__(self, attrname):
+        return getattr(self._d, attrname)
+
+    def __contains__(self, element):
+        return element in self._d
+
+    def __iter__(self):
+        return iter(self._d)
+
 
 if __name__ == '__main__':
     unittest.main()
