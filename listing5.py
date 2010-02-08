@@ -4,7 +4,7 @@ import collections, unittest, UserDict
 
 import listing4
 
-class Task(UserDict.DictMixin):
+class Task(object, UserDict.DictMixin):
 
     def __init__(self, d=None, **kwargs):
         self._d = {}
@@ -46,8 +46,8 @@ class Task(UserDict.DictMixin):
     def __delitem__(self, k):
         self._d.__delitem__(k)
 
-    def copy(self):
-        return Task(self._d.copy())
+    # def copy(self):
+        # return Task(self._d.copy())
 
     def __str__(self):
 
@@ -90,6 +90,17 @@ class TestDictUtilityMethods(listing4.TestDictUtilityMethods):
 
     def setUp(self):
         self.Task = Task
+
+class InheritedTask(Task):
+
+    def __str__(self):
+        return super(InheritedTask, self).__str__()
+
+
+class TestInheritedTaskAsString(TestAsString):
+
+    def setUp(self):
+        self.Task = InheritedTask
 
 
 class TestPEP3119(unittest.TestCase):

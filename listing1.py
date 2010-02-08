@@ -4,7 +4,7 @@ import unittest
 
 class TestTaskAsString(unittest.TestCase):
     """
-    This one is going to raise ERRORs.
+    This one is going to raise ERRORs because self.Task isn't defined.
     """
 
     def test_as_str_when_empty(self):

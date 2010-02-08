@@ -4,7 +4,7 @@ import unittest
 
 import listing1
 
-class TestRestrictedValueTaskAsString(listing1.TestTaskAsString):
+class TestAsString(listing1.TestTaskAsString):
 
     def setUp(self):
         self.Task = Task
@@ -51,7 +51,7 @@ class TestRestrictToTypes(unittest.TestCase):
     def setUp(self):
         self.Task = RestrictedValueTask
 
-    def test_1(self):
+    def test_allowed_type(self):
         """
         Verify we can set a key to an allowed type.
         """
@@ -65,7 +65,7 @@ class TestRestrictToTypes(unittest.TestCase):
         t['temperature'] = 99
         assert t['temperature'] == 99
 
-    def test_2(self):
+    def test_bad_value(self):
         """
         Verify that assigning to a value not in the set raises a
         ValueError.

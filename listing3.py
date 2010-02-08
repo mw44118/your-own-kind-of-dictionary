@@ -33,6 +33,11 @@ class TestDictUtilityMethods(unittest.TestCase):
     def setUp(self):
         self.Task = Task
 
+    def test_getitem(self):
+
+        t = self.Task(title='wash dishes', importance='not very')
+        assert t['importance'] == 'not very'
+
     def test_keys(self):
 
         t = self.Task(title='wash dishes', importance='not very')
@@ -59,13 +64,6 @@ class TestDictUtilityMethods(unittest.TestCase):
     def test_contains(self):
         t = self.Task(title='wash dishes', importance='not very')
         assert 'title' in t
-
-    def test_copy(self):
-        t = self.Task(title='wash dishes', importance='not very')
-        copy_of_t = t.copy()
-
-        for k, v in t.items():
-            assert t[k] is copy_of_t[k]
 
     def test_iterate_through_keys(self):
         t = self.Task(title='wash dishes', importance='not very')

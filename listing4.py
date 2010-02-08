@@ -4,9 +4,6 @@ import unittest, UserDict
 
 import listing3
 
-"""
-Write a task that uses composition, not inheritance.
-"""
 
 class TestAsString(listing3.TestAsString):
 
@@ -50,7 +47,6 @@ class Task(UserDict.UserDict):
                 "%s must be an instance of %s, not %s!"
                 % (k, allowed_types[k], type(v)))
 
-        # super(Task, self).__setitem__(k, v)
         self.data.__setitem__(k, v)
 
 
@@ -76,6 +72,20 @@ class Task(UserDict.UserDict):
                 + [""]
                 )
 
+
+class InheritedTask(Task):
+
+    """
+    Show how super doesn't work on UserDict.UserDict.
+    """
+
+    def __str__(self):
+        return super(InheritedTask, self).__str__()
+
+class TestInheritedTaskAsString(TestAsString):
+
+    def setUp(self):
+        self.Task = InheritedTask
 
 
 if __name__ == '__main__':
