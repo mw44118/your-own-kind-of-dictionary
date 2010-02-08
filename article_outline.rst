@@ -108,8 +108,43 @@ Outline for Your Own Kind of Dictionary
         the mixin does the rest.
 
     *   Since I subclass both object and UserDict.DictMixin, I don't
-        have the same problem with using super.
+        have the same problem with using super.  My
+        TestInheritedTaskAsString passes fine here.
+
+    *   I add a new test to see if my class is instance of
+        collections.MutableMapping, and the test fails.
+
+    *   PEP 3119 adds a standard way to tell if an object supports
+        certain behaviors.  For example, it has never been obvious to me
+        how to see if an object can "quack like" a dictionary.  I've
+        read recommendations to do all of these:
+
+        *   try it and catch the exception
+
+        *   Look for a __getitem__ method
+
+        *   Use isinstance to test if the class descends from dict.
+
+        Now there's a standard way to see if something can act like a
+        dictionary:  Test that the object is an instance of
+        collections.MutableMapping.
 
 *   Discuss listing6
 
+    *  Very similar to using UserDict.DictMixin
+
+    *   Now the last tests pass!
+
 *   Summary
+
+    *   Using tests is a nice way to do exploratory coding.  Without all
+        the tests, I often get stuck in a loop where I fix one thing by
+        breaking something else.
+
+    *   I think of tests as an executable specification.
+
+    *   Subclassing builtin types like list, dict, set, or anything else
+        implemented in C can have bizarre consequences.
+
+    *   Just because its in the standard lib, doesn't mean its perfect.
+

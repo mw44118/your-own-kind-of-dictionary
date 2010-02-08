@@ -72,9 +72,6 @@ class Task(collections.MutableMapping):
     def __delitem__(self, k):
         self._d.__delitem__(k)
 
-    def copy(self):
-        return Task(self._d.copy())
-
     def __iter__(self):
         return iter(self._d)
 
@@ -102,6 +99,17 @@ class Task(collections.MutableMapping):
                     if k != 'title']
                 + [""]
                 )
+
+class InheritedTask(Task):
+
+    def __str__(self):
+        return super(InheritedTask, self).__str__()
+
+
+class TestInheritedTaskAsString(TestAsString):
+
+    def setUp(self):
+        self.Task = InheritedTask
 
 if __name__ == '__main__':
     unittest.main()

@@ -46,9 +46,6 @@ class Task(object, UserDict.DictMixin):
     def __delitem__(self, k):
         self._d.__delitem__(k)
 
-    # def copy(self):
-        # return Task(self._d.copy())
-
     def __str__(self):
 
         if not self._d:
