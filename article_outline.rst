@@ -4,12 +4,11 @@ Outline for Your Own Kind of Dictionary
 
 *   What I want
 
-*   Why I want a dictionary
-
 *   What do I need my object to do
 
     *   Tweak the __str__ method
-    *   Restrict values for some keys
+    *   Restrict values for some keys to elements of a set
+    *   Restrict values for some keys to instances of a type
     *   quack like a dictionary
 
 *   I'll use something vaguely similar to TDD
