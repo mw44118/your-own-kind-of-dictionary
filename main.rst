@@ -113,4 +113,20 @@ code to satisfy all those tests.  Then I'll write some more tests.
 Or maybe after I get my code to pass all the tests once, I'll go back
 and reorganize it to make it not so ugly.
 
+Listing one discussion
+======================
+
+There's a lot of stuff going on in listing1.py, but I'll walk through it
+line by line.  First I wrote a class TestTaskAsString, and the point of
+that class is to make sure that my Task class prints out as a string
+like how I want.
+
+I hope the two methods easy to understand -- in the first one,
+test_as_str_when_empty, I call the __str__ method on my Task instance td
+by using the builtin str.
+
+
+
+
+
 
