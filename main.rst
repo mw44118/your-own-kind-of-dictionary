@@ -16,6 +16,13 @@ certain keys.
 It took me way longer than I expected to find a solution that did
 everything.
 
+This article wanders through the following topics:
+
+    *   subclassing built-in types like dict
+    *   emulating dictionary behavior without subclassing dict
+    *   testing with the standard library unittest module
+    *   abstract base classes and PEP 3119
+
 What I want
 ===========
 
@@ -113,6 +120,38 @@ code to satisfy all those tests.  Then I'll write some more tests.
 Or maybe after I get my code to pass all the tests once, I'll go back
 and reorganize it to make it not so ugly.
 
+Test-driven development (TDD) is a style of development where the
+developer writes some test code and then writes just enough code to
+satisfy that test.  Then the developer adds a new test, and then writes
+enough code to satisfy both tests.  The process looks a little like
+this:
+
+    *   write a test
+    *   write some code
+    *   write a new test
+    *   write some new code rewrite the code already there
+    *   go back to the top
+
+Often the first tests only focus on a tiny subset of the true required
+functionality.  For example, a test might only verify that a module can
+be imported, even if the module is empty.
+
+TDD is a great way to write code, but for this article, I'm not going to
+be strict about doing TDD exactly by the rules.  Instead, in this
+article, I'm going use something vaguely like TDD (SVLTDD).  I'll write
+several tests at a time.  My tests will focus on the end result, and
+often test compound behaviors that depend on several units all working
+correctly.
+
+Then once I have a big enough pile of tests to write something
+interesting, I'll write code.  Usually, if I'm just writing code to
+satisfy a test, I'll write the worst solution I can think of at first.
+
+Then when I've got something ugly, but functional, I'll go back and
+tweak it.  I'll depend on my tests to make sure that my tweaking doesn't
+break anything.
+
+
 Listing one discussion
 ======================
 
@@ -124,9 +163,3 @@ like how I want.
 I hope the two methods easy to understand -- in the first one,
 test_as_str_when_empty, I call the __str__ method on my Task instance td
 by using the builtin str.
-
-
-
-
-
-
