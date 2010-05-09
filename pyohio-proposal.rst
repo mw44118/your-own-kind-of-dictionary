@@ -1,63 +1,87 @@
-Building your own kind of dictionary by writing tests
-=====================================================
+Building your own kind of dictionary
+====================================
 
 :Type: talk
 
 :Presenter: W. Matthew Wilson <matt@tplus1.com>
 
-:Python level: intermediate
+:Python level: novice
 
 Description
 -----------
 
-I wanted an object like the regular python dictionary, but with a few
+My talk is based on a project that seemed very simple at first.  I
+wanted an object like the regular python dictionary, but with a few
 small tweaks:
 
-*   Tweak the __str__ method
-*   Restrict values for some keys to elements of a set
-*   Restrict values for some keys to instances of a type
+*   values for some keys should be restricted to elements of a set
+*   values for some keys should be restricted to instances of a type
 
-This sounds trivial, but it ain't.
+For example, pretend I want a dictionary called favorites, and I want
+the value for the "color" key to be any instance of my Color class.
+Meanwhile, for the "movie" key, I want to make sure that the value
+belongs to my set of movies.
 
-In the talk, I'll walk through the tests I wrote and the different
-implementations I tried until coming up with a winner.  I'll also point
-out some stuff that I learned:
+In the talk, I'll walk through how I used tests to validate my different
+implementations until I came up with a winner.
 
-*   Subclassing types defined in C doesn't do what I thought it would
-    do.
+Unlike my talk last year on metaclass tomfoolery, and the year before
+that on fun with decorators (and decorator factories) I'm hoping to make
+this talk straightforward and friendly to beginning programmers.
 
-*   UserDict.UserDict in the standard library is not a new-style class!
+You'll see:
 
-*   PEP 3119 is a nifty solution to a few problems with duck-typing.  It
-    is more difficult than it should be to distinguish between a
-    dictionary and a list.
+*   how I use tests to solve a real-world problem
+*   a few little gotchas with the super keyword
+*   a little about how python works under the hood.
 
 Extended description
 --------------------
 
-You can read all the code and tests and the talk itself online at my
-github repository at
-http://github.com/mw44118/your-own-kind-of-dictionary.
+I'm not done with the slides, but all my code examples are finished.
+You can read it all online at my github repository `here`_.
 
+.. _here: at http://github.com/mw44118/your-own-kind-of-dictionary
 
 Outline
 -------
 
-I'm not done, but this is the skeleton I'll likely follow:
+*   What kind of object I want
+    *   Tests define the expected behavior
+    *   How to run those tests
 
-*   What kind of object I want (described using tests)
+*   First implementation (subclass dict)
+    *   How the implementation is defined
+    *   Examine test results
+    *   Examine the C code behind the dict class to see why my
+        subclassed __setitem__ method won't get called from the parent
+        class
 
-*   Walk through first implementation (subclass dict) and test results
-
-*   composition-based approach
+*   Composition-based implementation
+    *   Explain the composition approach vs inheritance
+    *   Examine test results
+    *   Point out irritating to either manually redefine every
+        related dictionary method on the container class
+    *   Show how to use __getattr__ to avoid all that boring wrapper
+        code
+    *   Show how __getattr__ doesn't play nice with inspection tools
 
 *   UserDict.UserDict
+    *   Explain implementation
+    *   Examine test results
+    *   Add a new test that uses this class as a parent for a subclass
+    *   Explain how UserDict.UserDict is not a new-style class, so the
+        super keyword fails.
 
 *   UserDict.DictMixin
+    *   Explain implementation
+    *   Examine test results
 
 *   PEP 3119 and why it is nice
-
-*   collections.MutableMapping
+    *   duck-typing, why it is awesome, why it isn't perfect
+    *   abstract base classes
+    *   As of python 2.6, don't use UserDict.DictMixin; use
+        collections.MutableMapping
 
 
 Bio
@@ -69,6 +93,7 @@ http://blog.tplus1.com.
 Recording release
 -----------------
 
-I will sign the recording release agreement (text at http://wiki.python.org/moin/PyOhio/RecordingRelease).
+I will sign the recording release agreement (text at
+http://wiki.python.org/moin/PyOhio/RecordingRelease).
 
 .. Email to to cfp@pyohio.org by May 10, 2010
