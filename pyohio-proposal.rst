@@ -20,9 +20,8 @@ small tweaks:
 This sounds trivial, but it ain't.
 
 In the talk, I'll walk through the tests I wrote and the different
-implementations I tried.  I'll point out where each ultimately failed in
-some corner case, until the final solution.  I'll also point out some
-stuff that I learned:
+implementations I tried until coming up with a winner.  I'll also point
+out some stuff that I learned:
 
 *   Subclassing types defined in C doesn't do what I thought it would
     do.
@@ -46,32 +45,26 @@ Outline
 
 I'm not done, but this is the skeleton I'll likely follow:
 
-*   Describe what kind of object I want
+*   What kind of object I want (described using tests)
 
-*   Discuss the tests written for the first set of features
+*   Walk through first implementation (subclass dict) and test results
 
-*   Discuss the first implementation (subclass dict directly) and point
-    out why it is inadequate
+*   composition-based approach
 
-*   Discuss the second implementation (use composition) and point out
-    where it breaks down
+*   UserDict.UserDict
 
-*   Discuss third implementation (UserDict.UserDict)
+*   UserDict.DictMixin
 
-*   Discuss fourth implementation (UserDict.DictMixin)
+*   PEP 3119 and why it is nice
 
-*   Discuss what the heck PEP 3119 is all about and why it is nice
-
-*   Discuss the last implementation based on collections.MutableMapping
-
+*   collections.MutableMapping
 
 
 Bio
 ---
 
-Dad, programmer, gardener, entrepeneur, internet crackpot.  Would love
-to do some consulting gigs and is willing to work for $$$.  But the
-work must be interesting.
+Dad, programmer, gardener, entrepeneur, internet crackpot.  Blogs at
+http://blog.tplus1.com.
 
 Recording release
 -----------------
