@@ -60,8 +60,8 @@ Outline
 *   Composition-based implementation
     *   Explain the composition approach vs inheritance
     *   Examine test results
-    *   Point out irritating to either manually redefine every
-        related dictionary method on the container class
+    *   Point out irritating need to manually redefine every related
+        dictionary method on the container class
     *   Show how to use __getattr__ to avoid all that boring wrapper
         code
     *   Show how __getattr__ doesn't play nice with inspection tools
