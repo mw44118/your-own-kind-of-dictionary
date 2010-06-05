@@ -26,8 +26,8 @@ This article wanders through the following topics:
 What I want
 ===========
 
-I'm working on a project-management system.  I want to store a task as
-an object that is essentially a dictionary, except with a few extra
+I'm working on a project-management system.  I want to store each task
+as an object that is essentially a dictionary, except with a few extra
 features, constraints, and methods added on.
 
 What do I need my object to do

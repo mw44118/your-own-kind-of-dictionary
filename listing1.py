@@ -143,8 +143,6 @@ class RefactoredTask(UglyTask):
 
         return ''.join([self.attributes_subtitle, attributes])
 
-
-
     def display_single_attribute(self, k):
         """
         Return a single string like
