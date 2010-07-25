@@ -4,28 +4,13 @@ Building your own kind of dictionary
 
 .. contents::
 
-
 What kind of object I want
 ==========================
 
 It should act like a regular dictionary, except:
 
-*   Change how it prints out
-*   Allow instances to restrict values for keys
-
-Tests define the expected behavior
-----------------------------------
-
-
-
-How to run those tests
-----------------------
-
-First implementation (subclass dict)
-====================================
-
-How the implementation is defined
----------------------------------
+*   Change how it prints out (__str__)
+*   Allow instances to restrict values for keys (__setitem__)
 
 Examine test results
 --------------------
