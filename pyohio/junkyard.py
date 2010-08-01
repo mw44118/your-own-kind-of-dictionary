@@ -1,6 +1,7 @@
 # vim: set expandtab ts=4 sw=4 filetype=python:
 
 import UserDict
+import collections
 
 class Movie(str):
     """
@@ -8,6 +9,9 @@ class Movie(str):
     """
 
 class FailDict(object):
+
+    def __getitem__(self, k):
+        pass
 
     def __setitem__(self, k, v):
         pass
@@ -59,6 +63,9 @@ class CompositeDict(object):
         if kwargs:
             for k, v in kwargs.items():
                 self.__setitem__(k, v)
+
+    def __getitem__(self, k):
+        return self._d[k]
 
     def __setitem__(self, k, v):
         allowed_sets = getattr(self, 'allowed_sets', {})
@@ -123,10 +130,94 @@ class UserDictSubclass(UserDict.UserDict):
         if k in allowed_types \
         and not isinstance(v, allowed_types[k]):
 
-            raise ValueError(
+            raise TypeError(
                 "%s must be an instance of %s, not %s!"
                 % (k, allowed_types[k], type(v)))
 
         self.data.__setitem__(k, v)
 
 
+class DictMixinSubclass(object, UserDict.DictMixin):
+
+    def __init__(self, d=None, **kwargs):
+        self._d = {}
+
+        if isinstance(d, dict):
+            for k in d:
+                self[k] = d[k]
+
+        for k in kwargs:
+            self[k] = kwargs[k]
+
+    def __getitem__(self, k):
+        return self._d[k]
+
+    def __setitem__(self, k, v):
+
+        allowed_sets = getattr(self, 'allowed_sets', {})
+        allowed_types = getattr(self, 'allowed_types', {})
+
+        if k in allowed_sets \
+        and v not in allowed_sets[k]:
+
+            raise ValueError(
+                "%s must be one of %s, not %s!"
+                % (k, allowed_sets[k], v))
+
+        if k in allowed_types \
+        and not isinstance(v, allowed_types[k]):
+
+            raise TypeError(
+                "%s must be an instance of %s, not %s!"
+                % (k, allowed_types[k], type(v)))
+
+        self._d.__setitem__(k, v)
+
+    def keys(self):
+        return self._d.keys()
+
+    def __delitem__(self, k):
+        self._d.__delitem__(k)
+
+
+class MutableMappingSubclass(collections.MutableMapping):
+
+    def __init__(self, d=None, **kwargs):
+        self._d = {}
+
+        if isinstance(d, dict):
+            for k in d:
+                self[k] = d[k]
+
+        for k in kwargs:
+            self[k] = kwargs[k]
+
+    def __getitem__(self, k):
+        return self._d[k]
+
+    def __setitem__(self, k, v):
+
+        allowed_sets = getattr(self, 'allowed_sets', {})
+        allowed_types = getattr(self, 'allowed_types', {})
+
+        if k in allowed_sets \
+        and v not in allowed_sets[k]:
+
+            raise ValueError(
+                "%s must be one of %s, not %s!"
+                % (k, allowed_sets[k], v))
+
+        if k in allowed_types \
+        and not isinstance(v, allowed_types[k]):
+
+            raise TypeError(
+                "%s must be an instance of %s, not %s!"
+                % (k, allowed_types[k], type(v)))
+
+        self._d.__setitem__(k, v)
+
+    def keys(self):
+        return self._d.keys()
+
+    def __delitem__(self, k):
+        self._d.__delitem__(k)

@@ -2,11 +2,11 @@
 
 import unittest
 
-import test4
+import test3
 
-from junkyard import Movie, UserDictSubclass
+from junkyard import Movie, DictMixinSubclass
 
-class TestUserDict(test4.TestCompositeFavorites):
+class TestSubclassedFavorites(test3.TestFavoritesEvenMore):
 
     """
     Rerun the tests on the UserDict.UserDict sublcass.
@@ -16,7 +16,7 @@ class TestUserDict(test4.TestCompositeFavorites):
 
         allowed_colors = set(['red', 'green', 'blue'])
 
-        class Favorites(UserDictSubclass):
+        class Favorites(DictMixinSubclass):
 
             allowed_sets = {
                 'color':allowed_colors,
@@ -28,7 +28,15 @@ class TestUserDict(test4.TestCompositeFavorites):
                 'integer': int
             }
 
-        self.Favorites = Favorites
+        class NoisyFavorites(Favorites):
+
+            def __setitem__(self, k, v):
+                print "Inside __setitem__ with key %s and value %s" % (k, v)
+
+                super(NoisyFavorites, self).__setitem__(k, v)
+
+        self.Favorites = NoisyFavorites
+
 
 if __name__ == '__main__':
     unittest.main()

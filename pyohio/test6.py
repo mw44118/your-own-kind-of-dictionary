@@ -2,15 +2,19 @@
 
 import unittest
 
-from junkyard import Movie, FailDict
+from junkyard import Movie, UserDictSubclass
 
-class TestFavorites(unittest.TestCase):
+class TestUserDictSuper(unittest.TestCase):
+
+    """
+    Rerun the tests on the UserDict.UserDict sublcass.
+    """
 
     def setUp(self):
 
         allowed_colors = set(['red', 'green', 'blue'])
 
-        class Favorites(FailDict):
+        class Favorites(UserDictSubclass):
 
             allowed_sets = {
                 'color':allowed_colors,
@@ -22,9 +26,19 @@ class TestFavorites(unittest.TestCase):
                 'integer': int
             }
 
-        self.Favorites = Favorites
+        class NoisyFavorites(Favorites):
+
+            def __setitem__(self, k, v):
+                print "Inside __setitem__ with key %s and value %s" % (k, v)
+
+                super(NoisyFavorites, self).__setitem__(k, v)
+
+        self.Favorites = NoisyFavorites
 
     def test_1(self):
+        """
+        This is a verbatim copy-paste from test1.py
+        """
 
         f = self.Favorites()
         f['color'] = 'red'
@@ -33,29 +47,6 @@ class TestFavorites(unittest.TestCase):
         m = Movie('Pootie Tang')
         f['movie'] = m
         self.assertEqual(f['movie'], m)
-
-    def test_2(self):
-        """
-        Verify we can't store a non-color with the color key.
-        """
-
-        f = self.Favorites()
-
-        self.assertRaises(
-            ValueError,
-            f.__setitem__,
-            *('color', 'squant'))
-
-    def test_3(self):
-
-        """
-        Verify we can't store anything but an instance of the Movie
-        class for a movie.
-        """
-
-        f = self.Favorites()
-        self.assertRaises(
-            TypeError, f.__setitem__, *('movie', 99))
 
 
 if __name__ == '__main__':

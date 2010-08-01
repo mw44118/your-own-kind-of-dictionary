@@ -1,12 +1,13 @@
 # vim: set expandtab ts=4 sw=4 filetype=python:
 
+import collections
 import unittest
 
-import test4
+import test3
 
-from junkyard import Movie, UserDictSubclass
+from junkyard import Movie, MutableMappingSubclass
 
-class TestUserDict(test4.TestCompositeFavorites):
+class TestIncompleteSpecification(unittest.TestCase):
 
     """
     Rerun the tests on the UserDict.UserDict sublcass.
@@ -16,7 +17,7 @@ class TestUserDict(test4.TestCompositeFavorites):
 
         allowed_colors = set(['red', 'green', 'blue'])
 
-        class Favorites(UserDictSubclass):
+        class Favorites(MutableMappingSubclass):
 
             allowed_sets = {
                 'color':allowed_colors,
@@ -28,7 +29,20 @@ class TestUserDict(test4.TestCompositeFavorites):
                 'integer': int
             }
 
-        self.Favorites = Favorites
+        class NoisyFavorites(Favorites):
+
+            def __setitem__(self, k, v):
+                print "Inside __setitem__ with key %s and value %s" % (k, v)
+
+                super(NoisyFavorites, self).__setitem__(k, v)
+
+        self.Favorites = NoisyFavorites
+
+    def test_6(self):
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

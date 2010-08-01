@@ -11,7 +11,7 @@ I want an object like a regular dictionary, except I want to restrict
 values for some keys.
 
 For example, pretend I have a class called Favorites, and I want this
-code to work just fine::
+code to work fine::
 
     f = Favorites()
     f['color'] = 'red'
@@ -49,7 +49,7 @@ Write a few tests
 
 Notice this stuff:
 
-*   The FailDict is just a placeholder.
+*   The FailDict is a placeholder.
 
 *   I define my Favorites in the setUp method.
 
@@ -193,7 +193,7 @@ The CompositeDict in junkyard.py take a different approach -- instead of
 subclassing dict, it stores a dictionary inside, and then adds methods
 on the outside to make it seem like a dictionary subclass.
 
-This approach gets around the nasty issues in the first implementation::
+This approach gets around the issues in the first implementation::
 
     $ python test4.py
     .....
@@ -244,49 +244,186 @@ So, I'll put the composition approach in the "maybe" pile.
 UserDict.UserDict implementation
 ================================
 
-Explain implementation
-----------------------
+The standard library has a UserDict module with a UserDict class inside.
+Back in olden times, it wasn't possible to subclass dict directly.
 
-Examine test results
---------------------
+This one sucks.  First of all, it fails at test_4 and test_5, which are
+the tests that make sure that __init__ and update use our special
+homemade __setitem__ method::
 
-Add another test
-----------------
+    $ python test5.py
+    ...FF
+    ======================================================================
+    FAIL: test_4 (__main__.TestUserDict)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    File
+    "/home/matt/checkouts/your-own-kind-of-dictionary/pyohio/test3.py",
+    line 23, in test_4
+    **{'color': 'squant'})
+    AssertionError: ValueError not raised
 
-Add a new test that uses this class as a parent for a subclass
+    ======================================================================
+    FAIL: test_5 (__main__.TestUserDict)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    File
+    "/home/matt/checkouts/your-own-kind-of-dictionary/pyohio/test3.py",
+    line 37, in test_5
+    d)
+    AssertionError: TypeError not raised
 
-super keyword fail
-------------------
+    ----------------------------------------------------------------------
+    Ran 5 tests in 0.001s
 
-Explain how UserDict.UserDict is not a new-style class, so the
-super keyword fails.
-
-UserDict.DictMixin
-==================
-
-Explain implementation
-----------------------
-
-Examine test results
---------------------
+    FAILED (failures=2)
 
 
-PEP 3119
-========
+But that is fixable -- I would need to write my own __init__ and update
+to force it.  Which is yucky, but not a complete show-stopper.
 
-duck-typing
------------
 
-why it is awesome, why it isn't perfect
+More UserDict.UserDict failure
+==============================
 
-Add another test
-----------------
+The code in the setUp method test6.py subclasses Favorites to add a
+little debugging stuff.
 
-This test verifies our class is an instance of
-collections.MutableMapping.
+Then it runs one single easy test -- test_1 -- that does some simple
+sets and then gets.  And KABOOM::
 
-abstract base classes
----------------------
+    (master)$ python test6.py
+    Inside __setitem__ with key color and value red
+    E
+    ======================================================================
+    ERROR: test_1 (__main__.TestUserDictSuper)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    File "test6.py", line 46, in test_1
+    f['color'] = 'red'
+    File "test6.py", line 36, in __setitem__
+    super(NoisyFavorites, self).__setitem__(k, v)
+    TypeError: super() argument 1 must be type, not classobj
 
-As of python 2.6, don't use UserDict.DictMixin; use
-collections.MutableMapping instead.
+    ----------------------------------------------------------------------
+    Ran 1 test in 0.001s
+
+    FAILED (errors=1)
+
+Notice this line::
+
+    TypeError: super() argument 1 must be type, not classobj
+
+UserDict.UserDict is an old-style class, meaning it is defined like
+this::
+
+    class UserDict:
+
+and not like this instead::
+
+    class UserDict(object):
+
+This has some non-obvious and annoying consequences on UserDict.  The
+super function does different things on old-style classes and new-style
+classes.
+
+It makes sense that UserDict.UserDict is not a new-style class, since it
+was written before new-style classes were invented, and one of the
+points of new-style classes was to allow people to subclass the built-in
+types.
+
+On to UserDict.DictMixin
+========================
+
+The test7.py file imports my DictMixinSubclass and then subclasses it
+and then runs all the old tests again::
+
+    (master)$ python test7.py
+    Inside __setitem__ with key color and value red
+    Inside __setitem__ with key movie and value Pootie Tang
+    .Inside __setitem__ with key color and value squant
+    .Inside __setitem__ with key movie and value 99
+    .Inside __setitem__ with key color and value squant
+    .Inside __setitem__ with key integer and value 99.99
+    .
+    ----------------------------------------------------------------------
+    Ran 5 tests in 0.001s
+
+    OK
+
+Notice those noisy print statements -- those show we're able to use the
+super keyword.  And all the old tests pass.  Hurray!!!
+
+DictMixinSubclass implementation
+================================
+
+I'm using the same approach as the composition-based dictionary from
+earlier, but I don't have to implement all those related methods.
+Instead, as long as I define these methods:
+
+*   __init__
+*   __delitem__
+*   __getitem__
+*   __setitem__
+*   keys
+
+Then the DictMixin will do the right thing for all the other methods,
+like update, items, values, setdefault, __contains__, __iter__, pop,
+popitem, and many, many more.
+
+But wait -- there's more
+========================
+
+If you're using python2.6 or later, there's something even better than
+UserDict.DictMixin.  PEP 3109 introduced the idea of an abstract base
+class (ABC) to python.
+
+ABCs enforce requirements
+=========================
+
+Through metaclass tomfoolery, python makes sure you are defining
+everything you need to define in order to fulfill the interface.
+For example, an ABC will help you if you forget to define everything
+you have to.
+
+When I say "help you", I mean it will blow up when the class is
+defined::
+
+    >>> class MutableMappingSubclass(collections.MutableMapping):
+    ...     pass
+    >>>
+    >>> MutableMappingSubclass()
+    ------------------------------------------------------------
+    Traceback (most recent call last):
+      File "<ipython console>", line 1, in <module>
+      TypeError: Can't instantiate abstract class MutableMappingSubclass
+      with abstract methods __delitem__, __getitem__, __iter__, __len__,
+      __setitem__
+
+You don't get that kind of protection with
+DictMixin::
+
+    >>> class DictMixinSubclass(object, UserDict.DictMixin):
+    ...     pass
+    ...
+    >>> DictMixinSubclass()
+    <__main__.DictMixinSubclass object at 0xa0bb7ec>
+
+
+ABCs announce "I can quack like a dictionary"
+=============================================
+
+With all these different ways to emulate dictionary behavior, it was
+never easy to take an unknown object and then ask it if it supports a
+dictionary-like interface.
+
+1.  You can use hasattr to check for the existence of methods like
+    __getitem__ and keys, but you'll get a false negative on objects
+    using __getattr__ hooks.
+
+2.  You can use isinstance(dict), but that will fail for stuff like my
+    composition-based approach and the UserDict.DictMixin approach.
+
+But if you subclass from collections.MutableMapping, then you are OK.
+
+THE END
