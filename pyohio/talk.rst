@@ -4,118 +4,242 @@ Building your own kind of dictionary
 
 .. contents::
 
-What kind of object I want
-==========================
+What I want
+===========
 
-It should act like a regular dictionary, except it allows instances to
-restrict values for keys in different ways
+I want an object like a regular dictionary, except I want to restrict
+values for some keys.
 
-1.  Restrict values for a particular key to a set.  For example, I
-    want to have a key 'best Doctor Who companion' that requires a
-    choice between 'Leela' and 'Rose'.
+For example, pretend I have a class called Favorites, and I want this
+code to work just fine::
 
-2.  Require all values to be instances a certain class.  This is
-    similar to what you get in SQL when you declare a column to be
-    a certain type, except I want to allow subclasses of types to be
-    OK.
+    f = Favorites()
+    f['color'] = 'red'
+    f['movie'] = Movie('Pootie Tang')
 
-    For example, imagine that the "birthday" key requires the
-    value to be an instance of a datetime.date class.
+But I want this code to die a violent death::
 
-3.  Allow storing a callable for each key and store the results of
-    running the key and value through that callable.
+    f['color'] = 'squant'
 
-    For example, maybe we want to make sure that the value is a
-    prime number.  We can't provide a set of all prime numbers, and
-    we can't specify a prime number class.  But we can write a
-    function "is_a_prime_number" and make the dictionary do that.
+And this one also should die, but for a different reason::
 
+    f['movie'] = 99
+
+The interface
+=============
+
+Here's how to define the Favorites class used above::
+
+    allowed_colors = set(['red', 'green', 'blue'])
+
+    class Favorites(RestrictedDict):
+
+        allowed_sets = {
+            'color':allowed_colors,
+            'season':set(['summer', 'spring', 'winter', 'fall'])
+        }
+
+        allowed_types = {
+            'movie':Movie,
+            'integer':int
+        }
+
+Write a few tests
+=================
+
+Notice this stuff:
+
+*   The FailDict is just a placeholder.
+
+*   I define my Favorites in the setUp method.
+
+*   I assign self.Favorites to point to that Favorites class.
+
+*   The test_1 method makes an instance of self.Favorites, which is
+    really the class defined in setUp, which is a subclass of FailDict.
+
+*   The test_2 method wants to make sure that the code **does** blow up,
+    so it uses the unittest.TestCase.assertRaises method and gives it an
+    exception, a callable, and some arguments.
+
+    Then the unittest plumbing calls that callable and passes in those
+    arguments, and makes sure that the exception we asked for did
+    happen.
+
+Results from test1.py
+=====================
+
+Here's how to run the tests::
+
+    $ python test1.py
+    .FF
+    ======================================================================
+    FAIL: test_2 (__main__.TestFavorites)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "test1.py", line 43, in test_2
+          *('color', 'squant'))
+          AssertionError: ValueError not raised
+
+    ======================================================================
+    FAIL: test_3 (__main__.TestFavorites)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    File "test1.py", line 54, in test_3
+        TypeError, f.__setitem__, *('movie', 99))
+        AssertionError: TypeError not raised
+
+    ----------------------------------------------------------------------
+    Ran 3 tests in 0.000s
+
+    FAILED (failures=2)
 
 First implementation (subclass dict)
 ====================================
 
-First I'll subclass dict and then redefine the __setitem__(self, k, v).
-I'll check the k and v objects and if everything checks out, I'll store
-this key-value pair.  It works like this::
-
-    >>> from junkyard import subclassed_dict
-    >>> d = subclassed_dict()
-    >>> d.allowed_values = {
-    ...     'best Doctor Who companion':set(['Leela', 'Rose'])
-    >>> d['best Doctor Who companion'] = 'Leela' # should be OK
-
-    >>> d['best Doctor Who companion'] = 'Ramona' # hell no
-    ...
-
-This is the __setitem__ method from my subclassed dictionary.  It only
-implements #1 (limit values to elements of a set)::
+This is the __setitem__ method from the SubclassDict class::
 
     def __setitem__(self, k, v):
-        """
-        This assumes that self.allowed_values exists and is a dictionary
-        that maps keys to allowed values for that key.
 
-        """
+        allowed_sets = getattr(self, 'allowed_sets', {})
+        allowed_types = getattr(self, 'allowed_types', {})
 
-        if k in allowed_sets \
-        and v not in allowed_sets[k]:
+        if k in allowed_sets:
 
-            raise ValueError(
-                "%s must be one of %s, not %s!"
-                % (k, allowed_sets[k], v))
+            s = allowed_sets[k]
 
-        if k in allowed_types \
-        and not isinstance(v, allowed_types[k]):
+            if v not in s:
 
-            raise ValueError(
-                "%s must be an instance of %s, not %s!"
-                % (k, allowed_types[k], type(v)))
+                raise ValueError(
+                    "Sorry, but values for %s must be in %s!"
+                    % (k, s))
 
-        super(Task, self).__setitem__(k, v)
+        if k in allowed_types:
+
+            cls = allowed_types[k]
+
+            if not isinstance(v, cls):
+
+                raise TypeError(
+                    "Sorry, but values for %s must be instances of %s!"
+                    % (k, cls))
+
+        super(SubclassDict, self).__setitem__(k, v)
 
 
+Initial test results
+====================
+
+The file test2.py applies the tests written in test1.py to a Favorites
+class based on SubclassDict, rather than FailDict::
+
+    $ python test2.py
+    ...
+    ----------------------------------------------------------------------
+    Ran 3 tests in 0.000s
+
+    OK
 
 
+Now add some more tests
+=======================
 
-How the implementation is defined
----------------------------------
+The test3.py file adds two more tests for the subclass dict, and
+SubclassDict fails on both::
 
-Examine test results
---------------------
+    $ python test3.py
+    ...FF
+    ======================================================================
+    FAIL: test_4 (__main__.TestFavoritesEvenMore)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    File "test3.py", line 23, in test_4
+        **{'color': 'squant'})
+        AssertionError: ValueError not raised
 
-The tests show that the subclassed __setitem__ method won't get called
-from the parent class.
+    ======================================================================
+    FAIL: test_5 (__main__.TestFavoritesEvenMore)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+        File "test3.py", line 37, in test_5
+        d)
+        AssertionError: TypeError not raised
 
-Examine C code behind dict
---------------------------
+    ----------------------------------------------------------------------
+    Ran 5 tests in 0.002s
 
-It wasn't obvious to me why I got this error.  I asked around and was
-told to read XXXXX.c to understand...
+    FAILED (failures=2)
+
+
+Why SubclassDict fails
+======================
+
+The Favorites class is a subclass of SubclassDict which is a subclass of
+dict.
+
+The tests show that python doesn't use my own __setitem__ method from
+within Favorites.__init__ and Favorites.update.
+
+Why???
+
+This is because the methods __init__ and update on the dict class are
+written in C, and they are tightly linked to the C implementation of
+__setitem__.
 
 Composition-based implementation
 ================================
 
-Composition vs inheritance
---------------------------
+The CompositeDict in junkyard.py take a different approach -- instead of
+subclassing dict, it stores a dictionary inside, and then adds methods
+on the outside to make it seem like a dictionary subclass.
 
-Examine test results
---------------------
+This approach gets around the nasty issues in the first implementation::
 
-Add methods to the container
-----------------------------
+    $ python test4.py
+    .....
+    ----------------------------------------------------------------------
+    Ran 5 tests in 0.001s
 
-Point out irritating need to manually redefine every related dictionary
-method on the container class
+    OK
 
-Use __getattr__
-----------------
+How it works
+============
 
-Show how to use __getattr__ to avoid all that boring wrapper code
+I define __init__ and update to make sure that these methods always use
+my __setitem__ method, which does the same stuff as the __setitem__ in
+SubclassDict.
 
-__getattr__ ruins inspection
-----------------------------
+Why I don't like it
+===================
 
-__getattr__ doesn't play nice with inspection tools
+There are lots of methods besides __getitem__ and __setitem__ on the
+dictionary class::
+
+    >>> [k for k in dir({}) if not k.startswith('__')]
+
+    ['clear', 'copy', 'fromkeys', 'get', 'has_key', 'items',
+    'iteritems', 'iterkeys', 'itervalues', 'keys', 'pop', 'popitem',
+    'setdefault', 'update', 'values']
+
+If I want to offer all these methods with my class, I have to choose one
+of these:
+
+1.  Write out all these methods one by one::
+
+        def keys(self):
+            return self._d.keys()
+
+    Boring!!!
+
+2.  Use some __getattr__ shenanigans instead::
+
+        def __getattr__(self, attrname):
+            return getattr(self._d, attrname)
+
+    But now dir (and other inspection tools) won't be able to see what
+    is really going on.
+
+So, I'll put the composition approach in the "maybe" pile.
 
 UserDict.UserDict implementation
 ================================
