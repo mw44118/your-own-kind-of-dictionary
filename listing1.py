@@ -60,8 +60,7 @@ class TestBogusTaskAsString(TestTaskAsString):
 
 class UglyTask(dict):
     """
-    Just like a dictionary, but with modified __str__ and __setitem__
-    methods.
+    Just like a dictionary, but with a modified __str__ method.
     """
 
     def __str__(self):
