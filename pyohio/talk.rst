@@ -169,8 +169,6 @@ SubclassDict fails on both::
     Ran 5 tests in 0.002s
 
     FAILED (failures=2)
->>>>>>> fbe765ed35b68c6029dd41dc0da38c992bcfe2a2:pyohio/talk.rst
-
 
 Why SubclassDict fails
 ======================
